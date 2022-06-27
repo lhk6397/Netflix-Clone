@@ -8,7 +8,7 @@ const Nav = styled.nav`
   width: 100%;
   top: 0;
   background-color: black;
-  font-size: 14px;
+  font-size: 18px;
   padding: 20px 60px;
   color: white;
 `;
@@ -19,9 +19,9 @@ const Col = styled.div`
 `;
 
 const Logo = styled.svg`
-  margin-right: 50px;
+  margin: 0 60px;
   width: 95px;
-  height: 25px;
+  height: 45px;
   fill: ${(props) => props.theme.red};
   /* path {
     stroke-width: 6px;
