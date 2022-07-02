@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getMovies, IGetMovies } from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   background: black;
@@ -56,6 +57,7 @@ const Box = styled(motion.div)<{ bgImage: string }>`
   background-image: url(${(props) => props.bgImage});
   background-size: cover;
   background-position: center center;
+  cursor: pointer;
   &:first-child {
     transform-origin: center left;
   }
@@ -118,6 +120,7 @@ const infoVariants = {
 const offset = 6;
 
 const Home = () => {
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery<IGetMovies>(
     ["movies", "nowPlaying"],
     getMovies
@@ -134,6 +137,9 @@ const Home = () => {
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
+  const onBoxClicked = (movieId: number) => {
+    navigate(`/movie/${movieId}`);
+  };
   return (
     <Wrapper>
       {isLoading ? (
@@ -167,6 +173,7 @@ const Home = () => {
                       initial="normal"
                       variants={boxVariants}
                       transition={{ type: "tween" }}
+                      onClick={() => onBoxClicked(movie.id)}
                       bgImage={makeImagePath(movie.backdrop_path, "w500")}
                     >
                       <Info variants={infoVariants}>
