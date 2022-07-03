@@ -1,16 +1,15 @@
 import { Link, useMatch } from "react-router-dom";
 import styled from "styled-components";
-import { motion, useAnimation } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useAnimation, useViewportScroll } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-const Nav = styled.nav`
+const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: black;
   font-size: 18px;
   padding: 20px 60px;
   color: white;
@@ -99,6 +98,11 @@ const logoVariants = {
   },
 };
 
+const navVariants = {
+  top: { backgroundColor: "rgba(0,0,0,0)" },
+  scroll: { backgroundColor: "rgba(0,0,0,1)" },
+};
+
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
@@ -108,6 +112,8 @@ function Header() {
   const favoriteMatch = useMatch("favorite");
   const subtitleMatch = useMatch("subtitle");
   const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
+  const { scrollY } = useViewportScroll();
   const inputFocus = useRef<HTMLInputElement>(null);
   const toggleSearch = () => {
     if (searchOpen) {
@@ -118,12 +124,19 @@ function Header() {
       inputAnimation.start({ scaleX: 1 });
     }
     setSearchOpen((prev) => !prev);
-    if (inputFocus.current !== null) {
-      inputFocus.current.focus();
-    }
+    inputFocus.current?.focus();
   };
+  useEffect(() => {
+    scrollY.onChange(() => {
+      if (scrollY.get() > 80) {
+        navAnimation.start("scroll");
+      } else {
+        navAnimation.start("top");
+      }
+    });
+  }, [scrollY]);
   return (
-    <Nav>
+    <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
       <Col>
         <Link to="/">
           <Logo
@@ -183,8 +196,9 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
+            animate={inputAnimation}
+            initial={{ scaleX: 0 }}
             ref={inputFocus}
-            animate={{ scaleX: searchOpen ? 1 : 0 }}
             transition={{ type: "linear" }}
             placeholder="제목, 사람, 장르"
           />
