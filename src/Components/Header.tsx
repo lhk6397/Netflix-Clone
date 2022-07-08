@@ -1,7 +1,13 @@
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { motion, useAnimation, useViewportScroll } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import {
+  motion,
+  useAnimation,
+  useTransform,
+  useViewportScroll,
+} from "framer-motion";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -51,11 +57,11 @@ const Item = styled.li`
   }
 `;
 
-const Search = styled.span`
-  position: relative;
+const Search = styled.form`
+  color: white;
   display: flex;
   align-items: center;
-  color: white;
+  position: relative;
   svg {
     height: 25px;
   }
@@ -65,8 +71,8 @@ const Circle = styled(motion.span)`
   position: absolute;
   width: 5px;
   height: 5px;
-  border-radius: 5px;
-  bottom: -10px;
+  border-radius: 2.5px;
+  bottom: -5px;
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -74,8 +80,8 @@ const Circle = styled(motion.span)`
 `;
 
 const Input = styled(motion.input)`
-  position: absolute;
   transform-origin: right center;
+  position: absolute;
   right: 0px;
   padding: 5px 10px;
   padding-left: 40px;
@@ -103,6 +109,10 @@ const navVariants = {
   scroll: { backgroundColor: "rgba(0,0,0,1)" },
 };
 
+interface IForm {
+  keyword: string;
+}
+
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
@@ -114,7 +124,6 @@ function Header() {
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useViewportScroll();
-  const inputFocus = useRef<HTMLInputElement>(null);
   const toggleSearch = () => {
     if (searchOpen) {
       inputAnimation.start({
@@ -124,7 +133,6 @@ function Header() {
       inputAnimation.start({ scaleX: 1 });
     }
     setSearchOpen((prev) => !prev);
-    inputFocus.current?.focus();
   };
   useEffect(() => {
     scrollY.onChange(() => {
@@ -134,7 +142,12 @@ function Header() {
         navAnimation.start("top");
       }
     });
-  }, [scrollY]);
+  }, [scrollY, navAnimation]);
+  const navigate = useNavigate();
+  const { register, handleSubmit, setFocus } = useForm<IForm>();
+  const onValid = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword}`);
+  };
   return (
     <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
       <Col>
@@ -181,8 +194,12 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <Search onClick={toggleSearch}>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
+            onClick={() => {
+              setFocus("keyword");
+              toggleSearch();
+            }}
             animate={{ x: searchOpen ? -215 : 0 }}
             transition={{ type: "linear" }}
             fill="currentColor"
@@ -196,9 +213,9 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
+            {...register("keyword", { required: true, minLength: 2 })}
             animate={inputAnimation}
             initial={{ scaleX: 0 }}
-            ref={inputFocus}
             transition={{ type: "linear" }}
             placeholder="제목, 사람, 장르"
           />
