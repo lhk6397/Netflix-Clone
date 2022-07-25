@@ -1,11 +1,6 @@
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import {
-  motion,
-  useAnimation,
-  useTransform,
-  useViewportScroll,
-} from "framer-motion";
+import { motion, useAnimation, useViewportScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -153,6 +148,7 @@ function Header() {
       <Col>
         <Link to="/">
           <Logo
+            fill="white"
             variants={logoVariants}
             whileHover="active"
             initial="normal"
@@ -173,24 +169,6 @@ function Header() {
               시리즈 {tveMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
-          <Link to="movies">
-            <Item>영화 {movieMatch && <Circle layoutId="circle" />}</Item>
-          </Link>
-          <Link to="new">
-            <Item>
-              NEW! 요즘 대세 콘텐츠 {newMatch && <Circle layoutId="circle" />}
-            </Item>
-          </Link>
-          <Link to="favorite">
-            <Item>
-              내가 찜한 콘텐츠 {favoriteMatch && <Circle layoutId="circle" />}
-            </Item>
-          </Link>
-          <Link to="subtitle">
-            <Item>
-              음성 및 자막 {subtitleMatch && <Circle layoutId="circle" />}
-            </Item>
-          </Link>
         </Items>
       </Col>
       <Col>
