@@ -111,11 +111,7 @@ interface IForm {
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
-  const tveMatch = useMatch("tv");
-  const movieMatch = useMatch("movies");
-  const newMatch = useMatch("new");
-  const favoriteMatch = useMatch("favorite");
-  const subtitleMatch = useMatch("subtitle");
+  const tvMatch = useMatch("tv");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useViewportScroll();
@@ -142,6 +138,7 @@ function Header() {
   const { register, handleSubmit, setFocus } = useForm<IForm>();
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`);
+    navigate(0);
   };
   return (
     <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
@@ -166,7 +163,7 @@ function Header() {
           </Item>
           <Item>
             <Link to="tv">
-              시리즈 {tveMatch && <Circle layoutId="circle" />}
+              시리즈 {tvMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
         </Items>
